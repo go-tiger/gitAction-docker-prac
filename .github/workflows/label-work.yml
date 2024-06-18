@@ -38,3 +38,8 @@ jobs:
           hasSome: spring
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           allowFailure: true
+
+      - name: Set outputs
+        run: |
+          echo "nestjs_label=${{ steps.pr-labels-nestjs.outputs.passed }}" >> $GITHUB_ENV
+          echo "spring_label=${{ steps.pr-labels-spring.outputs.passed }}" >> $GITHUB_ENV
