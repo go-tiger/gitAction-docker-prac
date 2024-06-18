@@ -25,6 +25,7 @@ jobs:
         with:
           hasSome: nestjs
           githubToken: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
 
       - name: PR label - spring
         id: label-check-spring
@@ -32,6 +33,7 @@ jobs:
         with:
           hasSome: spring
           githubToken: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
 
       - name: label = nestjs
         if: steps.label-check-nestjs.outputs.hasSome == 'true'
