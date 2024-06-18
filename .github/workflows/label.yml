@@ -34,7 +34,7 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: label = nestjs
-        if: steps.label-check-nestjs.outputs.has-labels == 'true'
+        if: steps.label-check-nestjs.outputs.hasSome == 'true'
         run: echo "label nestjs"
 
       - name: label = spring
