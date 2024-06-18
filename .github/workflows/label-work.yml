@@ -45,7 +45,7 @@ jobs:
           -H "Accept: application/vnd.github.json" \
           -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
           https://api.github.com/repos/${{ github.repository }}/actions/workflows/nestjs-cicd.yml/dispatches \
-          -d '{"ref":"heads/dev"}'
+          -d '{"ref":"${{ github.head_ref }}"}'
 
       - name: spring label cicd
         if: steps.pr-labels-spring.outputs.passed == 'true'
@@ -54,4 +54,4 @@ jobs:
           -H "Accept: application/vnd.github.json" \
           -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
           https://api.github.com/repos/${{ github.repository }}/actions/workflows/spring-cicd.yml/dispatches \
-          -d '{"ref":"heads/dev"}'
+          -d '{"ref":"${{ github.head_ref }}"}'
