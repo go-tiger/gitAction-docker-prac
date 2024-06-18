@@ -1,18 +1,11 @@
 name: NestJS CI/CD
 
 on:
-  workflow_run:
-    workflows: ["PR Merged test"]
-    types:
-      - completed
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: CI/CD
         run: echo "NestJS CI/CD"
