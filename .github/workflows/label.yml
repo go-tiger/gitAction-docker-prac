@@ -1,0 +1,35 @@
+name: PR Label test
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - dev
+
+jobs:
+  pr_merge:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: test
+        run: echo "test"
+
+  labeler:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - id: label-PR
+        uses: actions/labeler@v5
+
+      - id: nestjs-workflow
+        if: contains(steps.label-PR.outputs.all-labels, 'nestjs')
+        run: |
+          echo "nestjs"
+
+      - id: spring-workflow
+        if: contains(steps.label-PR.outputs.all-labels, 'spring')
+        run: |
+          echo "spring"
