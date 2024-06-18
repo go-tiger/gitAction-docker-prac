@@ -43,12 +43,12 @@ jobs:
         if: steps.pr-labels-nestjs.outputs.passed == 'true'
         uses: benc-uk/workflow-dispatch@v1.2.3
         with:
-          workflow: ./nestjs-cicd.yml
+          workflow: .github/workflows/nestjs-cicd.yml
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: spring label cicd
         if: steps.pr-labels-spring.outputs.passed == 'true'
         uses: benc-uk/workflow-dispatch@v1.2.3
         with:
-          workflow: ./spring-cicd.yml
+          workflow: .github/workflows/spring-cicd.yml
           token: ${{ secrets.GITHUB_TOKEN }}
