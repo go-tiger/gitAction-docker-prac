@@ -17,8 +17,8 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - name: test
-        run: echo "merged True"
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Check PR labels - nestjs
         id: pr-labels-nestjs
