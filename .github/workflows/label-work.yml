@@ -16,9 +16,6 @@ jobs:
   pr_merge_label:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    outputs:
-      nestjs_label: ${{ steps.pr-labels-nestjs.outputs.passed }}
-      spring_label: ${{ steps.pr-labels-spring.outputs.passed }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -39,7 +36,18 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           allowFailure: true
 
-      - name: Set outputs
-        run: |
-          echo "nestjs_label=${{ steps.pr-labels-nestjs.outputs.passed }}" >> $GITHUB_ENV
-          echo "spring_label=${{ steps.pr-labels-spring.outputs.passed }}" >> $GITHUB_ENV
+      - name: nestjs label cicd
+        if: steps.pr-labels-nestjs.outputs.passed == 'true'
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            execSync('gh workflow run nestjs-cicd.yml', { stdio: 'inherit' });
+
+      - name: spring label cicd
+        if: steps.pr-labels-spring.outputs.passed == 'true'
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            execSync('gh workflow run spring-cicd.yml', { stdio: 'inherit' });
