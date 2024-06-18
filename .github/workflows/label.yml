@@ -8,8 +8,8 @@ on:
       - dev
 
 permissions:
-  contents: read
-  pull-requests: write
+  pull-requests: read
+  checks: write
 
 jobs:
   pr_merge_label:
