@@ -38,9 +38,14 @@ jobs:
 
       - name: nestjs label cicd
         if: steps.pr-labels-nestjs.outputs.passed == 'true'
-        run: gh workflow run nestjs-cicd.yml --ref dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/actions/workflows/nestjs-cicd.yml/dispatches \
+          -d '{"ref":"dev"}'
 
       - name: spring label cicd
         if: steps.pr-labels-spring.outputs.passed == 'true'
