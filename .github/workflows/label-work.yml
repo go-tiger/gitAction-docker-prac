@@ -16,6 +16,9 @@ jobs:
   pr_merge_label:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    outputs:
+      nestjs_label: ${{ steps.pr-labels-nestjs.outputs.passed }}
+      spring_label: ${{ steps.pr-labels-spring.outputs.passed }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
