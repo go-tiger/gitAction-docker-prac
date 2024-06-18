@@ -1,10 +1,14 @@
 name: NestJS CI/CD
 
 on:
-  workflow_dispatch:
+  workflow_run:
+    workflows: ['PR Merged test']
+    types:
+      - completed
 
 jobs:
   build:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.outputs.nestjs_label == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: CI/CD
