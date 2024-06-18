@@ -39,6 +39,8 @@ jobs:
       - name: nestjs label cicd
         if: steps.pr-labels-nestjs.outputs.passed == 'true'
         uses: actions/github-script@v3
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
             const { execSync } = require('child_process');
@@ -47,6 +49,8 @@ jobs:
       - name: spring label cicd
         if: steps.pr-labels-spring.outputs.passed == 'true'
         uses: actions/github-script@v3
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
             const { execSync } = require('child_process');
