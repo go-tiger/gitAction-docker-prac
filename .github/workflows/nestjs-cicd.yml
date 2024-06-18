@@ -1,0 +1,11 @@
+name: NestJS CI/CD
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: CI/CD
+        run: echo "NestJS CI/CD"

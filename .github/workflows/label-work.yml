@@ -35,10 +35,14 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           allowFailure: true
 
-      - name: Run actions based on nestjs label
+      - name: nestjs label cicd
         if: steps.pr-labels-nestjs.outputs.passed == 'true'
-        run: echo "nestjs"
+        uses: benc-uk/workflow-dispatch@v1.2.3
+        with:
+          workflow: nestjs-cicd.yml
 
-      - name: Run actions based on spring label
+      - name: spring label cicd
         if: steps.pr-labels-spring.outputs.passed == 'true'
-        run: echo "spring"
+        uses: benc-uk/workflow-dispatch@v1.2.3
+        with:
+          workflow: spring-cicd.yml
