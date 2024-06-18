@@ -38,7 +38,7 @@ jobs:
 
       - name: nestjs label cicd
         if: steps.pr-labels-nestjs.outputs.passed == 'true'
-        run: gh workflow run nestjs-cicd.yml
+        run: gh workflow run nestjs-cicd.yml --ref dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
