@@ -1,0 +1,38 @@
+name: PR Merged test
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - dev
+
+jobs:
+  pr_merge:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: test
+        run: echo "merged True"
+
+      - name: PR label - nestjs
+        id: label-check-nestjs
+        uses: danielchabr/pr-labels-checker@v3.3
+        with:
+          hasSome: 'nestjs'
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: PR label - spring
+        id: label-check-spring
+        uses: danielchabr/pr-labels-checker@v3.3
+        with:
+          hasSome: 'spring'
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: label = nestjs
+        if: steps.label-check-nestjs.outputs.has-labels == 'true'
+        run: echo "label nestjs"
+
+      - name: label = spring
+        if: steps.label-check-spring.outputs.has-labels == 'true'
+        run: echo "label spring"
