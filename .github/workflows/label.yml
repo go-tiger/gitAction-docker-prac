@@ -19,26 +19,26 @@ jobs:
       - name: test
         run: echo "merged True"
 
-      - name: PR label - nestjs
-        id: label-check-nestjs
+      - name: Check PR labels - nestjs
+        id: pr-labels-nestjs
         uses: danielchabr/pr-labels-checker@v3.3
         with:
           hasSome: nestjs
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
+          allowFailure: true
 
-      - name: PR label - spring
-        id: label-check-spring
+      - name: Check PR labels - spring
+        id: pr-labels-spring
         uses: danielchabr/pr-labels-checker@v3.3
         with:
           hasSome: spring
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
+          allowFailure: true
 
-      - name: label = nestjs
-        if: steps.label-check-nestjs.outputs.hasSome == 'true'
-        run: echo "label nestjs"
+      - name: Run actions based on nestjs label
+        if: steps.pr-labels-nestjs.outputs.passed == true
+        run: echo "nestjs"
 
-      - name: label = spring
-        if: steps.label-check-spring.outputs.hasSome == 'true'
-        run: echo "label spring"
+      - name: Run actions based on spring label
+        if: steps.pr-labels-spring.outputs.passed == true
+        run: echo "spring"
