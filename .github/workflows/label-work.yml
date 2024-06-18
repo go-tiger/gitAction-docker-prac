@@ -36,6 +36,9 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           allowFailure: true
 
+      - name: Debug workflow files
+        run: ls -R .github/workflows
+
       - name: nestjs label cicd
         if: steps.pr-labels-nestjs.outputs.passed == 'true'
         uses: benc-uk/workflow-dispatch@v1
