@@ -44,7 +44,7 @@ jobs:
         with:
           script: |
             const { execSync } = require('child_process');
-            execSync('gh workflow run nestjs-cicd.yml', { stdio: 'inherit' });
+            execSync('gh workflow run .github/workflows/nestjs-cicd.yml', { stdio: 'inherit' });
 
       - name: spring label cicd
         if: steps.pr-labels-spring.outputs.passed == 'true'
@@ -54,4 +54,4 @@ jobs:
         with:
           script: |
             const { execSync } = require('child_process');
-            execSync('gh workflow run spring-cicd.yml', { stdio: 'inherit' });
+            execSync('gh workflow run .github/workflows/spring-cicd.yml', { stdio: 'inherit' });
