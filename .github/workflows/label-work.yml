@@ -52,8 +52,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -X POST \
+          RESPONSE=$(curl -X POST \
           -H "Accept: application/vnd.github.json" \
           -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
           https://api.github.com/repos/${{ github.repository }}/actions/workflows/spring-cicd.yml/dispatches \
-          -d '{"ref":"dev"}'
+          -d '{"ref":"dev"}')
+          echo "$RESPONSE"
