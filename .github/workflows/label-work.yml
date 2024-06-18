@@ -57,6 +57,6 @@ jobs:
           https://api.github.com/repos/${{ github.repository }}/actions/workflows/spring-cicd.yml/dispatches \
           -d '{"ref":"dev"}')
           echo "$RESPONSE"
-        shell: /usr/bin/bash
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
