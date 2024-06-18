@@ -1,0 +1,16 @@
+name: PR Merged test
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - dev
+
+jobs:
+  pr_merge:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: test
+        run: echo "test"
