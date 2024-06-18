@@ -25,6 +25,7 @@ jobs:
         with:
           hasSome: nestjs
           githubToken: ${{ secrets.GITHUB_TOKEN }}
+          allowFailure: true
 
       - name: Check PR labels - spring
         id: pr-labels-spring
@@ -32,11 +33,12 @@ jobs:
         with:
           hasSome: spring
           githubToken: ${{ secrets.GITHUB_TOKEN }}
+          allowFailure: true
 
       - name: Run actions based on nestjs label
-        if: steps.pr-labels-nestjs.outputs.passed == true
+        if: steps.pr-labels-nestjs.outputs.passed == 'true'
         run: echo "nestjs"
 
       - name: Run actions based on spring label
-        if: steps.pr-labels-spring.outputs.passed == true
+        if: steps.pr-labels-spring.outputs.passed == 'true'
         run: echo "spring"
