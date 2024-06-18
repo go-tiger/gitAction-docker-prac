@@ -10,6 +10,7 @@ on:
 permissions:
   pull-requests: read
   checks: write
+  actions: write
 
 jobs:
   pr_merge_label:
