@@ -27,3 +27,52 @@ jobs:
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/nest-docker-test:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Connect to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /home/gotiger/site/nest-eatsfinder
+
+            # Docker Hub 로그인
+            echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+            # 이미지 풀링
+            docker pull g0tiger/nest-docker-test:latest
+
+            # 새로운 이미지를 Green/Blue 중 하나로 태그
+            if docker ps | grep app_blue; then
+              NEW_DEPLOYMENT="green"
+              OLD_DEPLOYMENT="blue"
+            else
+              NEW_DEPLOYMENT="blue"
+              OLD_DEPLOYMENT="green"
+            fi
+
+            docker tag g0tiger/nest-docker-test:latest g0tiger/nest-docker-test:$NEW_DEPLOYMENT
+            docker-compose up -d app_$NEW_DEPLOYMENT
+
+            sleep 10 # 새 컨테이너가 시작될 시간을 기다림
+
+            # Nginx 설정 변경
+            if [ "$NEW_DEPLOYMENT" == "green" ]; then
+              sed -i "s/proxy_pass http:\/\/127.0.0.1:8092;/proxy_pass http:\/\/127.0.0.1:8091;/" /home/gotiger/nginx/conf.d/nest-test.conf
+            else
+              sed -i "s/proxy_pass http:\/\/127.0.0.1:8091;/proxy_pass http:\/\/127.0.0.1:8092;/" /home/gotiger/nginx/conf.d/nest-test.conf
+            fi
+
+            # Nginx 재시작
+            docker-compose -f /home/gotiger/docker-compose-multi.yml up -d --force-recreate --no-deps nginx
+
+            # 이전 버전의 컨테이너 중지 및 제거
+            docker-compose stop app_$OLD_DEPLOYMENT
+            docker-compose rm -f app_$OLD_DEPLOYMENT
