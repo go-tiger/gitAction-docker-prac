@@ -23,6 +23,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: ./Dockerfile.nest
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/nest-docker-test:latest
           cache-from: type=gha
