@@ -65,9 +65,9 @@ jobs:
 
             # Nginx 설정 변경
             if [ "$NEW_DEPLOYMENT" == "green" ]; then
-              sed -i "s/proxy_pass http:\/\/127.0.0.1:8092;/proxy_pass http:\/\/127.0.0.1:8091;/" /home/gotiger/nginx/conf.d/nest-test.conf
+              sed -i "s/proxy_pass http:\/\/app_$OLD_DEPLOYMENT:3000;/proxy_pass http:\/\/app_$NEW_DEPLOYMENT:3000;/" /home/gotiger/nginx/conf.d/nest-test.conf
             else
-              sed -i "s/proxy_pass http:\/\/127.0.0.1:8091;/proxy_pass http:\/\/127.0.0.1:8092;/" /home/gotiger/nginx/conf.d/nest-test.conf
+              sed -i "s/proxy_pass http:\/\/app_$OLD_DEPLOYMENT:3000;/proxy_pass http:\/\/app_$NEW_DEPLOYMENT:3000;/" /home/gotiger/nginx/conf.d/nest-test.conf
             fi
 
             # Nginx 재시작
