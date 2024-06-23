@@ -41,13 +41,13 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /home/gotiger/site/nest-eatsfinder
+            cd /home/gotiger/site/nest-test
 
             # Docker Hub 로그인
             echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
             # 이미지 풀링
-            docker pull g0tiger/nest-docker-test:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/nest-docker-test:latest
 
             # 새로운 이미지를 Green/Blue 중 하나로 태그
             if docker ps | grep app_blue; then
@@ -58,7 +58,7 @@ jobs:
               OLD_DEPLOYMENT="green"
             fi
 
-            docker tag g0tiger/nest-docker-test:latest g0tiger/nest-docker-test:$NEW_DEPLOYMENT
+            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/nest-docker-test:latest ${{ secrets.DOCKER_HUB_USERNAME }}/nest-docker-test:$NEW_DEPLOYMENT
             docker-compose up -d app_$NEW_DEPLOYMENT
 
             sleep 10 # 새 컨테이너가 시작될 시간을 기다림
