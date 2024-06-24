@@ -61,6 +61,9 @@ jobs:
             fi
 
             docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/nest-docker-test:latest ${{ secrets.DOCKER_HUB_USERNAME }}/nest-docker-test:$NEW_DEPLOYMENT
+
+            echo "${{ secrets.ENV }}" > /home/gotiger/site/nest-test/.env
+
             docker-compose up -d app_$NEW_DEPLOYMENT
 
             sleep 10 # 새 컨테이너가 시작될 시간을 기다림
