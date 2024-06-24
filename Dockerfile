@@ -1,4 +1,4 @@
-FROM gradle:7.5.1-jdk11 AS builder
+FROM gradle:7.5.1-jdk17 AS builder
 WORKDIR /app
 COPY gradlew build.gradle.kts settings.gradle.kts ./
 COPY gradle gradle
