@@ -47,6 +47,9 @@ jobs:
       - name: 레포 체크아웃
         uses: actions/checkout@main
 
+      - name: Docker Buildx 설정
+        uses: docker/setup-buildx-action@master
+
       - name: Docker Hub 로그인
         uses: docker/login-action@master
         with:
@@ -60,6 +63,8 @@ jobs:
           file: ./Dockerfile.nestjs
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:nestjs
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   kotlin-build:
     runs-on: ubuntu-latest
@@ -81,6 +86,9 @@ jobs:
       - name: Gradle 빌드
         run: ./gradlew clean build
 
+      - name: Docker Buildx 설정
+        uses: docker/setup-buildx-action@master
+
       - name: Docker Hub 로그인
         uses: docker/login-action@master
         with:
@@ -94,6 +102,8 @@ jobs:
           file: ./Dockerfile.kotlin
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:kotlin
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   nestjs-deploy:
     runs-on: ubuntu-latest
