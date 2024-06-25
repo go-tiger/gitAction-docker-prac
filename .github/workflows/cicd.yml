@@ -154,7 +154,7 @@ jobs:
               OLD_DEPLOYMENT="green"
             fi
 
-            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:nestjs ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:$NEW_DEPLOYMENT
+            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:nestjs ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:nestjs:$NEW_DEPLOYMENT
 
             docker-compose up -d app-nestjs-$NEW_DEPLOYMENT
 
@@ -224,7 +224,7 @@ jobs:
               OLD_DEPLOYMENT="green"
             fi
 
-            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:kotlin ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:$NEW_DEPLOYMENT
+            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:kotlin ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:kotlin:$NEW_DEPLOYMENT
 
             docker-compose up -d app-kotlin-$NEW_DEPLOYMENT
 
