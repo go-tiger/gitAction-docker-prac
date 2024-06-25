@@ -154,8 +154,6 @@ jobs:
               OLD_DEPLOYMENT="green"
             fi
 
-            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:nestjs ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:nestjs
-
             docker-compose up -d app-nestjs-$NEW_DEPLOYMENT
 
             # 새 컨테이너가 시작될 시간을 기다림
@@ -223,8 +221,6 @@ jobs:
               NEW_DEPLOYMENT="blue"
               OLD_DEPLOYMENT="green"
             fi
-
-            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:kotlin ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:kotlin
 
             docker-compose up -d app-kotlin-$NEW_DEPLOYMENT
 
