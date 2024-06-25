@@ -43,7 +43,7 @@ tasks.withType<JavaCompile> {
             java.srcDirs("src/main/kotlin")
             resources {
                 srcDirs("src/main/resources")
-                exclude("**/.eslintrc.js", "**/.gitignore", "**/.prettierrc", "**/build.gradle.kts", "**/Dockerfile.nest", "**/HELP.md", "**/nest-cli.json", "**/package-lock.json", "**/package.json", "**/tsconfig.build.json", "**/tsconfig.json")
+                exclude("**/.eslintrc.js", "**/.gitignore", "**/.prettierrc", "**/Dockerfile.nest", "**/nest-cli.json", "**/package-lock.json", "**/package.json", "**/tsconfig.build.json", "**/tsconfig.json")
             }
         }
         test {

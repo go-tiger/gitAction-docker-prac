@@ -47,9 +47,6 @@ jobs:
       - name: 레포 체크아웃
         uses: actions/checkout@main
 
-      - name: Docker Buildx 설정
-        uses: docker/setup-buildx-action@master
-
       - name: Docker Hub 로그인
         uses: docker/login-action@master
         with:
@@ -60,11 +57,9 @@ jobs:
         uses: docker/build-push-action@master
         with:
           context: .
-          file: ./Dockerfile.nest
+          file: ./Dockerfile.nestjs
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/nest-docker-test:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:nestjs
 
   kotlin-build:
     runs-on: ubuntu-latest
@@ -86,9 +81,6 @@ jobs:
       - name: Gradle 빌드
         run: ./gradlew clean build
 
-      - name: Docker Buildx 설정
-        uses: docker/setup-buildx-action@master
-
       - name: Docker Hub 로그인
         uses: docker/login-action@master
         with:
@@ -101,9 +93,7 @@ jobs:
           context: .
           file: ./Dockerfile.kotlin
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/kotlin-docker-test:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:kotlin
 
   nestjs-deploy:
     runs-on: ubuntu-latest
@@ -126,7 +116,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           source: .env
-          target: /home/gotiger/site/nest-test
+          target: ${{ secrets.SERVER_PATH }}/site/${{ secrets.DOCKER_HUB_REPO }}
           overwrite: true
 
       - name: 서버 접속
@@ -137,13 +127,13 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /home/gotiger/site/nest-test
+            cd ${{ secrets.SERVER_PATH }}/site/${{ secrets.DOCKER_HUB_REPO }}
 
             # Docker Hub 로그인
             echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
             # 이미지 풀링
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/nest-docker-test:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
 
             # 새로운 이미지를 Green/Blue 중 하나로 태그
             if docker ps | grep app-nestjs-blue; then
@@ -154,7 +144,7 @@ jobs:
               OLD_DEPLOYMENT="green"
             fi
 
-            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/nest-docker-test:latest ${{ secrets.DOCKER_HUB_USERNAME }}/nest-docker-test:$NEW_DEPLOYMENT
+            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:$NEW_DEPLOYMENT
 
             docker-compose up -d app-nestjs-$NEW_DEPLOYMENT
 
@@ -163,13 +153,13 @@ jobs:
 
             # Nginx 설정 변경
             if [ "$NEW_DEPLOYMENT" == "green" ]; then
-              sed -i "s/proxy_pass http:\/\/app-nestjs-$OLD_DEPLOYMENT:3000;/proxy_pass http:\/\/app-nestjs-$NEW_DEPLOYMENT:3000;/" /home/gotiger/nginx/conf.d/nest-test.conf
+              sed -i "s/proxy_pass http:\/\/app-nestjs-$OLD_DEPLOYMENT:3000;/proxy_pass http:\/\/app-nestjs-$NEW_DEPLOYMENT:3000;/" ${{ secrets.SERVER_PATH }}/nginx/conf.d/nest-test.conf
             else
-              sed -i "s/proxy_pass http:\/\/app-nestjs-$OLD_DEPLOYMENT:3000;/proxy_pass http:\/\/app-nestjs-$NEW_DEPLOYMENT:3000;/" /home/gotiger/nginx/conf.d/nest-test.conf
+              sed -i "s/proxy_pass http:\/\/app-nestjs-$OLD_DEPLOYMENT:3000;/proxy_pass http:\/\/app-nestjs-$NEW_DEPLOYMENT:3000;/" ${{ secrets.SERVER_PATH }}/nginx/conf.d/nest-test.conf
             fi
 
             # Nginx 재시작
-            docker-compose -f /home/gotiger/docker-compose-multi.yml up -d --force-recreate --no-deps nginx
+            docker-compose -f ${{ secrets.SERVER_PATH }}/docker-compose-multi.yml up -d --force-recreate --no-deps nginx
 
             # 이전 버전의 컨테이너 중지 및 제거
             docker-compose stop app-nestjs-$OLD_DEPLOYMENT
@@ -196,7 +186,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           source: .env
-          target: /home/gotiger/site/kotlin-test
+          target: ${{ secrets.SERVER_PATH }}/site/${{ secrets.DOCKER_HUB_REPO }}
           overwrite: true
 
       - name: 서버 접속
@@ -207,13 +197,13 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /home/gotiger/site/kotlin-test
+            cd ${{ secrets.SERVER_PATH }}/site/${{ secrets.DOCKER_HUB_REPO }}
 
             # Docker Hub 로그인
             echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
             # 이미지 풀링
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/kotlin-docker-test:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:kotlin
 
             # 새로운 이미지를 Green/Blue 중 하나로 태그
             if docker ps | grep app-kotlin-blue; then
@@ -224,7 +214,7 @@ jobs:
               OLD_DEPLOYMENT="green"
             fi
 
-            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/kotlin-docker-test:latest ${{ secrets.DOCKER_HUB_USERNAME }}/kotlin-docker-test:$NEW_DEPLOYMENT
+            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:kotlin ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:$NEW_DEPLOYMENT
 
             docker-compose up -d app-kotlin-$NEW_DEPLOYMENT
 
@@ -233,13 +223,13 @@ jobs:
 
             # Nginx 설정 변경
             if [ "$NEW_DEPLOYMENT" == "green" ]; then
-              sed -i "s/proxy_pass http:\/\/app-kotlin-$OLD_DEPLOYMENT:8080;/proxy_pass http:\/\/app-kotlin-$NEW_DEPLOYMENT:8080;/" /home/gotiger/nginx/conf.d/kotlin-test.conf
+              sed -i "s/proxy_pass http:\/\/app-kotlin-$OLD_DEPLOYMENT:8080;/proxy_pass http:\/\/app-kotlin-$NEW_DEPLOYMENT:8080;/" ${{ secrets.SERVER_PATH }}/nginx/conf.d/kotlin-test.conf
             else
-              sed -i "s/proxy_pass http:\/\/app-kotlin-$OLD_DEPLOYMENT:8080;/proxy_pass http:\/\/app-kotlin-$NEW_DEPLOYMENT:8080;/" /home/gotiger/nginx/conf.d/kotlin-test.conf
+              sed -i "s/proxy_pass http:\/\/app-kotlin-$OLD_DEPLOYMENT:8080;/proxy_pass http:\/\/app-kotlin-$NEW_DEPLOYMENT:8080;/" ${{ secrets.SERVER_PATH }}/nginx/conf.d/kotlin-test.conf
             fi
 
             # Nginx 재시작
-            docker-compose -f /home/gotiger/docker-compose-multi.yml up -d --force-recreate --no-deps nginx
+            docker-compose -f ${{ secrets.SERVER_PATH }}/docker-compose-multi.yml up -d --force-recreate --no-deps nginx
 
             # 이전 버전의 컨테이너 중지 및 제거
             docker-compose stop app-kotlin-$OLD_DEPLOYMENT
