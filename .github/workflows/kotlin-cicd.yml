@@ -66,7 +66,7 @@ jobs:
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/kotlin-docker-test:latest
 
             # 새로운 이미지를 Green/Blue 중 하나로 태그
-            if docker ps | grep app_kotlin_blue; then
+            if docker ps | grep app-kotlin-blue; then
               NEW_DEPLOYMENT="green"
               OLD_DEPLOYMENT="blue"
             else
@@ -76,21 +76,21 @@ jobs:
 
             docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/kotlin-docker-test:latest ${{ secrets.DOCKER_HUB_USERNAME }}/kotlin-docker-test:$NEW_DEPLOYMENT
 
-            docker-compose up -d app_kotlin_$NEW_DEPLOYMENT
+            docker-compose up -d app-kotlin-$NEW_DEPLOYMENT
 
             # 새 컨테이너가 시작될 시간을 기다림
             sleep 10
 
             # Nginx 설정 변경
             if [ "$NEW_DEPLOYMENT" == "green" ]; then
-              sed -i "s/proxy_pass http:\/\/app_kotlin_$OLD_DEPLOYMENT:8080;/proxy_pass http:\/\/app_kotlin_$NEW_DEPLOYMENT:8080;/" /home/gotiger/nginx/conf.d/kotlin-test.conf
+              sed -i "s/proxy_pass http:\/\/app-kotlin-$OLD_DEPLOYMENT:8080;/proxy_pass http:\/\/app-kotlin-$NEW_DEPLOYMENT:8080;/" /home/gotiger/nginx/conf.d/kotlin-test.conf
             else
-              sed -i "s/proxy_pass http:\/\/app_kotlin_$OLD_DEPLOYMENT:8080;/proxy_pass http:\/\/app_kotlin_$NEW_DEPLOYMENT:8080;/" /home/gotiger/nginx/conf.d/kotlin-test.conf
+              sed -i "s/proxy_pass http:\/\/app-kotlin-$OLD_DEPLOYMENT:8080;/proxy_pass http:\/\/app-kotlin-$NEW_DEPLOYMENT:8080;/" /home/gotiger/nginx/conf.d/kotlin-test.conf
             fi
 
             # Nginx 재시작
             docker-compose -f /home/gotiger/docker-compose-multi.yml up -d --force-recreate --no-deps nginx
 
             # 이전 버전의 컨테이너 중지 및 제거
-            docker-compose stop app_kotlin_$OLD_DEPLOYMENT
-            docker-compose rm -f app_kotlin_$OLD_DEPLOYMENT
+            docker-compose stop app-kotlin-$OLD_DEPLOYMENT
+            docker-compose rm -f app-kotlin-$OLD_DEPLOYMENT
