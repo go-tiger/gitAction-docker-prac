@@ -133,7 +133,7 @@ jobs:
             echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
             # 이미지 풀링
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:nestjs
 
             # 새로운 이미지를 Green/Blue 중 하나로 태그
             if docker ps | grep app-nestjs-blue; then
@@ -144,7 +144,7 @@ jobs:
               OLD_DEPLOYMENT="green"
             fi
 
-            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:$NEW_DEPLOYMENT
+            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:nestjs ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:$NEW_DEPLOYMENT
 
             docker-compose up -d app-nestjs-$NEW_DEPLOYMENT
 
