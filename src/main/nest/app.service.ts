@@ -7,6 +7,6 @@ export class AppService {
 
   getHello(): string {
     const test_env = this.configService.get<string>('test_env');
-    return `Hello World!`;
+    return `Hello World! 그린`;
   }
 }
